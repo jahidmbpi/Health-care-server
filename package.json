@@ -6,14 +6,18 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "prisma": "dotenv -e .env -- prisma",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.18.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "dotenv-cli": "^10.0.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
@@ -21,6 +25,7 @@
     "@types/express": "^5.0.4",
     "@types/node": "^24.9.1",
     "nodemon": "^3.1.10",
+    "prisma": "^6.18.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
