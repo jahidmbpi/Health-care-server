@@ -4,12 +4,13 @@ import sendResponse from "../../sheard/sendResponse";
 import hthpStatus from "http-status-codes";
 import { userServices } from "./user.services";
 const createUser = catchAsync(async (req: Request, res: Response) => {
-  const result = await userServices.createUser();
+  const payload = req.body;
+  const result = await userServices.createUser(payload);
 
   sendResponse(res, {
     success: true,
-    statusCode: hthpStatus.OK,
-    massage: "  your profile retrived succesfully",
+    statusCode: hthpStatus.CREATED,
+    massage: "patient  created succefully",
     data: result,
   });
 });
