@@ -7,7 +7,7 @@ const createPatient = async (req: Request) => {
   const profilePhoto = req.file?.path as string;
 
   if (profilePhoto) {
-    req.body.profilePhoto = profilePhoto;
+    req.body.patient.profilePhoto = profilePhoto;
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -19,14 +19,14 @@ const createPatient = async (req: Request) => {
   };
 
   const result = await Prisma.$transaction(async (tnx) => {
-    await tnx.user.create({
+    const user = await tnx.user.create({
       data: userData,
     });
 
-    const createPritent = await tnx.patient.create({
+    const Patient = await tnx.patient.create({
       data: req.body.patient,
     });
-    return createPatient;
+    return Patient;
   });
   return result;
 };
