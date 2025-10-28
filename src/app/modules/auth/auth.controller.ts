@@ -4,7 +4,8 @@ import { authServices } from "./auth.services";
 import sendResponse from "../../sheard/sendResponse";
 
 const userLogin = catchAsync(async (req: Request, res: Response) => {
-  const result = authServices.userLogIn(req.body);
+  const result = await authServices.userLogIn(req.body);
+  console.log(result);
   sendResponse(res, {
     success: true,
     statusCode: 200,
