@@ -22,8 +22,6 @@ const storage = new CloudinaryStorage({
         fileName +
         "." +
         extension;
-      console.log(uniqueFileName);
-      console.log(fileName);
       return uniqueFileName;
     },
   },
