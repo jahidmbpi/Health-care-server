@@ -31,6 +31,36 @@ const createPatient = async (req: Request) => {
   return result;
 };
 
+const createAdmin = async (req: Request) => {
+  console.log(req.body);
+  const profilePhoto = req.file?.path as string;
+
+  console.log(req.body);
+  if (profilePhoto) {
+    req.body.admin.profilePhoto = profilePhoto;
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+  const userData = {
+    email: req.body.admin.email,
+    password: hashedPassword,
+    role: UserRole.ADMIN,
+  };
+
+  const result = await Prisma.$transaction(async (tnx) => {
+    const user = await tnx.user.create({
+      data: userData,
+    });
+
+    const Admin = await tnx.admin.create({
+      data: req.body.admin,
+    });
+    return Admin;
+  });
+  return result;
+};
 export const userServices = {
   createPatient,
+  createAdmin,
 };

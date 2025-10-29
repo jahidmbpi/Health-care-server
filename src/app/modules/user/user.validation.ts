@@ -21,3 +21,18 @@ export const createPatientZodSchema = z.object({
       .optional(),
   }),
 });
+
+export const createAdminZodSchema = z.object({
+  password: z.string(),
+  admin: z.object({
+    name: z.string({ error: "name is required" }),
+    email: z
+      .string({ error: "Email is required!" })
+      .email("Invalid email format"),
+
+    contactNumber: z
+      .string({ error: " constact number is required" })
+      .optional(),
+    address: z.string().optional(),
+  }),
+});

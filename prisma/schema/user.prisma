@@ -18,7 +18,7 @@ model Admin{
   name String
   email String @unique
   profilePhoto String?
-  contactNimber String
+  contactNumber String?
   isDeleted Boolean @default(false)
     createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -33,7 +33,7 @@ model Doctor{
   name String
   email String @unique
   profilePhoto String?
-  contactNimber String
+  contactNumber String
   address String
   registrationNumber String
   experience Int @default(0)
