@@ -4,6 +4,7 @@ import { multerUpload } from "../../config/multer.config";
 import { validateRequest } from "../../sheard/validaterequest";
 import {
   createAdminZodSchema,
+  createDoctorZodSchema,
   createPatientZodSchema,
 } from "./user.validation";
 
@@ -20,5 +21,11 @@ router.post(
   multerUpload.single("file"),
   validateRequest(createAdminZodSchema),
   userController.createAdmin
+);
+router.post(
+  "/create-doctor",
+  multerUpload.single("file"),
+  validateRequest(createDoctorZodSchema),
+  userController.createDoctor
 );
 export const userRouter = router;

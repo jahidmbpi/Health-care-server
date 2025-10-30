@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { Prisma } from "../../config/prisma";
 import { Request } from "express";
-import { UserRole } from "@prisma/client";
+import { Doctor, UserRole } from "@prisma/client";
 
 const createPatient = async (req: Request) => {
   const profilePhoto = req.file?.path as string;
@@ -60,7 +60,34 @@ const createAdmin = async (req: Request) => {
   });
   return result;
 };
+
+const createDoctor = async (req: Request): Promise<Doctor> => {
+  const profilePhoto = req.file?.path;
+  if (profilePhoto) {
+    req.body.doctor.profilePhoto = profilePhoto;
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  const userData = {
+    email: req.body.doctor.email,
+    password: hashedPassword,
+    role: UserRole.DOCTOR,
+  };
+
+  const result = await Prisma.$transaction(async (tnx) => {
+    const user = await tnx.user.create({
+      data: userData,
+    });
+
+    const createDoctordata = await tnx.doctor.create({
+      data: req.body.doctor,
+    });
+    return createDoctordata;
+  });
+  return result;
+};
 export const userServices = {
   createPatient,
   createAdmin,
+  createDoctor,
 };
