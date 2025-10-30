@@ -28,4 +28,5 @@ router.post(
   validateRequest(createDoctorZodSchema),
   userController.createDoctor
 );
+router.get("/get-all-user", userController.getAllUser);
 export const userRouter = router;
