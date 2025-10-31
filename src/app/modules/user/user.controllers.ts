@@ -3,6 +3,8 @@ import catchAsync from "../../sheard/catchAsync";
 import sendResponse from "../../sheard/sendResponse";
 import hthpStatus from "http-status-codes";
 import { userServices } from "./user.services";
+import { userFilterableFields } from "./user.constant";
+import pick from "../../sheard/pick";
 const createPatient = catchAsync(async (req: Request, res: Response) => {
   const result = await userServices.createPatient(req);
   sendResponse(res, {
@@ -31,16 +33,23 @@ const createDoctor = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
-  const result = await userServices.getAlluser();
+  const filters = pick(req.query, userFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+
+  const result = await userServices.getAllUser(filters, options);
 
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "get all user retrive success",
+    message: "All users retrieved successfully",
     data: result,
   });
 });
+
+export default getAllUser;
+
 export const userController = {
   createPatient,
   createAdmin,
