@@ -7,6 +7,8 @@ import {
   createDoctorZodSchema,
   createPatientZodSchema,
 } from "./user.validation";
+import { cheakAuth } from "../../sheard/cheakAuth";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
@@ -28,5 +30,9 @@ router.post(
   validateRequest(createDoctorZodSchema),
   userController.createDoctor
 );
-router.get("/get-all-user", userController.getAllUser);
+router.get(
+  "/get-all-user",
+  cheakAuth(UserRole.PATIENT, UserRole.DOCTOR),
+  userController.getAllUser
+);
 export const userRouter = router;
