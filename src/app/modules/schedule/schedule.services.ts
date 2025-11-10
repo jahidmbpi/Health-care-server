@@ -19,7 +19,7 @@ const createSchedule = async (payload: any) => {
 
     const endDateTime = addMinutes(
       addHours(
-        `${format(currentdate, "yyyy-mm-dd")}`,
+        `${format(currentdate, "yyyy-MM-dd")}`,
         Number(endTime.split(":")[0])
       ),
       Number(endTime.split(":")[1])
@@ -45,10 +45,12 @@ const createSchedule = async (payload: any) => {
         });
         schedule.push(result);
       }
+      startDateTime.setMinutes(startDateTime.getMinutes() + interval);
     }
+    currentdate.setDate(currentdate.getDate() + 1);
   }
 
-  return payload;
+  return schedule;
 };
 
 export const scheduleServices = {
