@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../sheard/catchAsync";
 import sendResponse from "../../sheard/sendResponse";
 import { scheduleServices } from "./schedule.services";
+import pick from "../../sheard/pick";
 
 const createSchedule = catchAsync(async (req: Request, res: Response) => {
   const result = await scheduleServices.createSchedule(req.body);
@@ -12,7 +13,20 @@ const createSchedule = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getSchedule = catchAsync(async (req: Request, res: Response) => {
+  const fileter = pick(req.query, ["startDate", "endDate"]);
+  const option = pick(req.query, ["limit", "page", "sortBy", "orderBy"]);
+  const user = req.user;
+  const result = await scheduleServices.getAllSchedule(fileter, option, user);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "schedule retrived  successfully",
+    data: result,
+  });
+});
 
 export const scheduleController = {
   createSchedule,
+  getSchedule,
 };

@@ -1,5 +1,11 @@
 import { addHours, addMinutes, format } from "date-fns";
-import { Prisma } from "../../config/prisma";
+import { IPaginationOptions } from "../../interface/pagination";
+import { paginationHelper } from "../../../helper/paginationHelper";
+
+import { Prisma as prisma } from "../../config/prisma";
+import { Prisma } from "@prisma/client";
+import { IAuthUser } from "../auth/suth.interface";
+import { JwtPayload } from "jsonwebtoken";
 
 const createSchedule = async (payload: any) => {
   const { startDate, endDate, startTime, endTime } = payload;
@@ -33,14 +39,14 @@ const createSchedule = async (payload: any) => {
         endDateTime: slotEndDateTime,
       };
 
-      const existingSchedule = await Prisma.schedule.findFirst({
+      const existingSchedule = await prisma.schedule.findFirst({
         where: {
           startDateTime: scheduledata.startDateTime,
           endDateTime: scheduledata.endDateTime,
         },
       });
       if (!existingSchedule) {
-        const result = await Prisma.schedule.create({
+        const result = await prisma.schedule.create({
           data: scheduledata,
         });
         schedule.push(result);
@@ -53,6 +59,93 @@ const createSchedule = async (payload: any) => {
   return schedule;
 };
 
+const getAllSchedule = async (
+  fileter: any,
+  option: IPaginationOptions,
+  user: JwtPayload
+) => {
+  const { page, limit, skip } = paginationHelper.calculatePagination(option);
+  const { startdate, endDate, ...filterData } = fileter;
+  const andCondition = [];
+  if (startdate && endDate) {
+    andCondition.push({
+      AND: [
+        {
+          startDateTime: {
+            gte: startdate,
+          },
+        },
+        {
+          endDateTime: {
+            lte: endDate,
+          },
+        },
+      ],
+    });
+  }
+  if (Object.keys(filterData).length > 0) {
+    andCondition.push({
+      AND: Object.keys(filterData).map((key) => {
+        return {
+          [key]: {
+            equals: (filterData as any)[key],
+          },
+        };
+      }),
+    });
+  }
+
+  const wherecondition: Prisma.ScheduleWhereInput =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+
+  const doctorSchedules = await prisma.doctorSchedule.findMany({
+    where: {
+      doctor: {
+        email: user?.email,
+      },
+    },
+  });
+  const doctorScheduleIds = doctorSchedules.map(
+    (schedule) => schedule.scheduleId
+  );
+
+  const result = await prisma.schedule.findMany({
+    where: {
+      ...wherecondition,
+      id: {
+        notIn: doctorScheduleIds,
+      },
+    },
+    skip,
+    take: limit,
+    orderBy:
+      option.sortBy && option.sortOrder
+        ? {
+            [option.sortBy]: option.sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
+  });
+  const totale = await prisma.schedule.count({
+    where: {
+      ...wherecondition,
+      id: {
+        notIn: doctorScheduleIds,
+      },
+    },
+  });
+  return {
+    meta: {
+      totale,
+      page,
+      limit,
+    },
+    data: result,
+  };
+};
+
 export const scheduleServices = {
   createSchedule,
+  getAllSchedule,
 };
