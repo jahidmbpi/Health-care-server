@@ -5,5 +5,6 @@ const router = Router();
 
 router.post("/schedule-create", scheduleController.createSchedule);
 router.get("/getAllschedule", scheduleController.getSchedule);
+router.delete("/:id", scheduleController.deleteSchedule);
 
 export const scheduleRouter = router;

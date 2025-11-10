@@ -4,7 +4,7 @@ import { paginationHelper } from "../../../helper/paginationHelper";
 
 import { Prisma as prisma } from "../../config/prisma";
 import { Prisma } from "@prisma/client";
-import { IAuthUser } from "../auth/suth.interface";
+import { IAuthUser } from "../auth/auth.interface";
 import { JwtPayload } from "jsonwebtoken";
 
 const createSchedule = async (payload: any) => {
@@ -144,8 +144,16 @@ const getAllSchedule = async (
     data: result,
   };
 };
-
+const deleteSchedule = async (id: string) => {
+  const result = await prisma.schedule.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
 export const scheduleServices = {
   createSchedule,
   getAllSchedule,
+  deleteSchedule,
 };
