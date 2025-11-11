@@ -1,5 +1,5 @@
 import { email } from "zod";
-import { Prisma, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { genarateTocken } from "./genareteTocken";
 import { envVars } from "../config";
 

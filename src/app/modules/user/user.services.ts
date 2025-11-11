@@ -92,10 +92,7 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
     });
 
     const doctor = await tnx.doctor.create({
-      data: {
-        ...req.body.doctor,
-        userId: user.id,
-      },
+      data: req.body.doctor,
     });
 
     return doctor;
