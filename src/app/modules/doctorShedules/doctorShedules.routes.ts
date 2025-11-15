@@ -16,5 +16,10 @@ router.get(
   cheakAuth(UserRole.DOCTOR),
   doctorScheduleController.getMyschedule
 );
+router.delete(
+  "/:id",
+  cheakAuth(UserRole.DOCTOR),
+  doctorScheduleController.deleteSchedules
+);
 
 export const doctorShedulesRoutes = router;
