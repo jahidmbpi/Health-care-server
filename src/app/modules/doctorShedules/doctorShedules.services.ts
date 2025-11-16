@@ -92,7 +92,7 @@ const getMySchedule = async (
     });
   }
 
-  const whereCondition: Prisma.DoctorScheduleScalarWhereInput =
+  const whereCondition: Prisma.DoctorScheduleWhereInput =
     condition.length > 0 ? { AND: condition } : {};
 
   const result = await prisma.doctorSchedule.findMany({
@@ -149,8 +149,70 @@ const deleteSchedules = async (scheduleId: string, user: JwtPayload) => {
   });
   return result;
 };
+
+const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
+  const { limit, page, skip } = paginationHelper.calculatePagination(option);
+  const { searchTram, ...filterData } = filter;
+  const andCondition: Prisma.DoctorScheduleWhereInput[] = [];
+
+  if (searchTram) {
+    andCondition.push({
+      doctor: {
+        name: {
+          contains: searchTram,
+          mode: "insensitive",
+        },
+      },
+    });
+  }
+  if (Object.keys(filterData).length > 0) {
+    if (typeof filterData.isBooked === "string") {
+      filterData.isBooked = filterData.isBooked === "true";
+    }
+
+    Object.keys(filterData).forEach((key) => {
+      andCondition.push({
+        [key]: {
+          equals: filterData[key],
+        },
+      });
+    });
+  }
+
+  const whereCondition: Prisma.DoctorScheduleWhereInput =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+
+  const result = await prisma.doctorSchedule.findMany({
+    include: {
+      doctor: true,
+      schedule: true,
+    },
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      option.sortBy && option.sortOrder
+        ? {
+            [option.sortBy]: option.sortOrder,
+          }
+        : {},
+  });
+  const total = await prisma.doctorSchedule.count({
+    where: whereCondition,
+  });
+  console.log(whereCondition);
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  };
+};
 export const doctorScheduleServices = {
   createDoctorSchedule,
   getMySchedule,
   deleteSchedules,
+  getAllFromDb,
 };

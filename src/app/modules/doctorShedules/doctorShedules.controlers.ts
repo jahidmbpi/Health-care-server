@@ -5,6 +5,7 @@ import { doctorScheduleServices } from "./doctorShedules.services";
 import AppError from "../../../helper/appError";
 import { JwtPayload } from "jsonwebtoken";
 import pick from "../../sheard/pick";
+import { scheduleFilterableFields } from "./doctorSchedule.constants";
 
 const createDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -51,8 +52,21 @@ const deleteSchedules = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllFromDb = catchAsync(async (req: Request, res: Response) => {
+  const filter = pick(req.query, scheduleFilterableFields);
+  const option = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const result = await doctorScheduleServices.getAllFromDb(filter, option);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "all doctor Schedule retrived successfully!",
+    data: result,
+  });
+});
+
 export const doctorScheduleController = {
   createDoctorSchedule,
   getMyschedule,
   deleteSchedules,
+  getAllFromDb,
 };
