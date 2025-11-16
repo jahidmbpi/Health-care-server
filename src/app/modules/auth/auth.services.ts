@@ -3,6 +3,7 @@ import { Prisma } from "../../config/prisma";
 import bcrypt from "bcryptjs";
 import { createUserTocken } from "../../sheard/createUserTocken";
 import { setCoockie } from "../../sheard/setCoockie";
+import AppError from "../../../helper/appError";
 
 const userLogIn = async (payload: { email: string; password: string }) => {
   const isUserExsit = await Prisma.user.findUnique({
@@ -23,7 +24,7 @@ const userLogIn = async (payload: { email: string; password: string }) => {
     isUserExsit?.password
   );
   if (matchPassword === false) {
-    throw new Error("invalid password, plase provide valid password");
+    throw new AppError(404, "invalid password, plase provide valid password");
   }
   const tocken = createUserTocken(isUserExsit);
 
