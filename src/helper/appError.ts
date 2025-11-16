@@ -1,8 +1,8 @@
 class AppError extends Error {
-  public statuscode: number;
-  constructor(statuscode: number, massage: string, stack = "") {
+  public statusCode: number;
+  constructor(statusCode: number, massage: string, stack = "") {
     super(massage);
-    this.statuscode = statuscode;
+    this.statusCode = statusCode;
     if (stack) {
       this.stack = stack;
     } else {

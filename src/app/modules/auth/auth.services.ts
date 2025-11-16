@@ -16,7 +16,7 @@ const userLogIn = async (payload: { email: string; password: string }) => {
     throw new Error("user not found");
   }
   if (!isUserExsit.password) {
-    throw new Error("password missing");
+    throw new AppError(404, "password missing");
   }
 
   const matchPassword = await bcrypt.compare(

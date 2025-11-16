@@ -13,25 +13,17 @@ const globalErrorHandler = (
   let message = err.message || "Something went wrong!";
   let error = err;
   let code: string | undefined = err.code;
-  let statusCode: number = httpStatus.INTERNAL_SERVER_ERROR;
+  let statusCode: number = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
 
   if (err instanceof Prisma.PrismaClientInitializationError) {
     statusCode = httpStatus.SERVICE_UNAVAILABLE;
-    code = err.errorCode;
-
-    if (err.errorCode === "P1000") {
-      message = "Invalid database authentication. Check your DATABASE_URL.";
-    } else if (err.errorCode === "P1002") {
-      message =
-        "Database server timeout. Ensure your DB is running and accessible.";
-    }
-
+    message = "Failed to initialize Prisma. Check database connection.";
     error = err.message;
   } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     code = err.code;
 
     if (err.code === "P2002") {
-      statusCode = httpStatus.CONFLICT; // 409
+      statusCode = httpStatus.CONFLICT;
       message = "Duplicate key error. Data already exists.";
       error = err.meta;
     }
@@ -44,7 +36,7 @@ const globalErrorHandler = (
   }
 
   if (err instanceof ZodError) {
-    statusCode = 400;
+    statusCode = httpStatus.BAD_REQUEST;
 
     const formattedErrors = err.issues.map((issue) => ({
       path: issue.path.join("."),
@@ -54,6 +46,7 @@ const globalErrorHandler = (
     message = "Validation error";
     error = formattedErrors;
   }
+
   res.status(statusCode).json({
     success,
     message,
