@@ -8,7 +8,7 @@ import { IDoctorInput } from "./doctor.interface";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);
-  const { searchTram, ...filterData } = filter;
+  const { searchTram, specialties, ...filterData } = filter;
   const andCondition: Prisma.DoctorWhereInput[] = [];
   if (searchTram) {
     andCondition.push({
@@ -18,6 +18,21 @@ const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
           mode: "insensitive",
         },
       })),
+    });
+  }
+
+  if (specialties && specialties.length > 0) {
+    andCondition.push({
+      specialties: {
+        some: {
+          specialty: {
+            title: {
+              contains: specialties,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
     });
   }
 

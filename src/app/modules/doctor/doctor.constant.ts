@@ -13,4 +13,5 @@ export const doctorSearchAblefield = [
   "qualification",
   "currentWorkingPlace",
   "designation",
+  "specialties",
 ];
