@@ -22,8 +22,19 @@ const getALlDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const deleteSpecialities = catchAsync(async (req: Request, res: Response) => {
+  const id = req.query.id as string;
+  const result = await speacialitesServices.deleteSpecialities(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: hthpStatus.OK,
+    message: " speacialites delete success",
+    data: result,
+  });
+});
 
 export const speacialitesController = {
   inertIntoDb,
   getALlDB,
+  deleteSpecialities,
 };

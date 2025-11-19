@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { Prisma as prisma } from "../../config/prisma";
 import { Ispeacialites } from "./speacialities.interface";
+import AppError from "../../../helper/appError";
 
 const inertIntoDb = async (req: Request) => {
   const file = req.file;
@@ -23,7 +24,26 @@ const getAllDb = async () => {
   return result;
 };
 
+const deleteSpecialities = async (id: string) => {
+  const isExsitSpeciality = await prisma.specialty.findFirst({
+    where: {
+      id,
+    },
+  });
+
+  if (!isExsitSpeciality) {
+    throw new AppError(404, "speciality not found");
+  }
+  const result = await prisma.specialty.delete({
+    where: {
+      id: id,
+    },
+  });
+  return isExsitSpeciality;
+};
+
 export const speacialitesServices = {
   inertIntoDb,
   getAllDb,
+  deleteSpecialities,
 };

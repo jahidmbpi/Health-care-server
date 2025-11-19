@@ -9,5 +9,6 @@ router.post(
   speacialitesController.inertIntoDb
 );
 router.get("/getall-Db", speacialitesController.getALlDB);
+router.delete("/delete", speacialitesController.deleteSpecialities);
 
 export const specialitiesRouter = router;
