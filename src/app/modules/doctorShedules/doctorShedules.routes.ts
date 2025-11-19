@@ -7,6 +7,7 @@ import { DoctorScheduleValidation } from "./doctorSchedule.validation";
 const router = Router();
 router.post(
   "/doctor-schedule",
+  validateRequest(DoctorScheduleValidation.create),
   cheakAuth(UserRole.DOCTOR),
   validateRequest(DoctorScheduleValidation.create),
 
