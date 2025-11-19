@@ -18,6 +18,19 @@ const getAllFromDb = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateDoctor = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const id = req.params.id;
+  const result = await doctorServices.updateDoctor(id, payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "doctor updateed succes",
+
+    data: result,
+  });
+});
 export const doctorController = {
   getAllFromDb,
+  updateDoctor,
 };

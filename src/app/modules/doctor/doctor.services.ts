@@ -1,9 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { Doctor, Prisma } from "@prisma/client";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
 import { doctorSearchAblefield } from "./doctor.constant";
 
 import { Prisma as prisma } from "../../config/prisma";
+import { IDoctorInput } from "./doctor.interface";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);
@@ -37,6 +38,13 @@ const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
     orderBy: {
       [sortBy]: sortOrder,
     },
+    include: {
+      specialties: {
+        include: {
+          specialty: true,
+        },
+      },
+    },
   });
 
   const tatal = await prisma.doctor.count({
@@ -52,6 +60,64 @@ const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   };
 };
 
+const updateDoctor = async (id: string, payload: Partial<IDoctorInput>) => {
+  const { specialties, ...doctorData } = payload;
+
+  const isExsitdoctor = await prisma.doctor.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return await prisma.$transaction(async (tnx) => {
+    if (specialties && specialties.length > 0) {
+      const deleteScecialityIds = specialties.filter(
+        (specialty) => specialty.isDeleted
+      );
+
+      for (const speciality of deleteScecialityIds) {
+        await tnx.doctorSpecialty.deleteMany({
+          where: {
+            doctorId: id,
+            specialtyId: speciality.specialtyId,
+          },
+        });
+      }
+
+      const createScecialityIds = specialties.filter(
+        (specialty) => !specialty.isDeleted
+      );
+      for (const speciality of createScecialityIds) {
+        await tnx.doctorSpecialty.createMany({
+          data: {
+            doctorId: id,
+            specialtyId: speciality.specialtyId,
+          },
+        });
+      }
+    }
+    await tnx.doctor.update({
+      where: {
+        id: id,
+      },
+      data: doctorData,
+    });
+
+    return await tnx.doctor.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        specialties: {
+          include: {
+            specialty: true,
+          },
+        },
+      },
+    });
+  });
+};
 export const doctorServices = {
   getAllFromDb,
+  updateDoctor,
 };
