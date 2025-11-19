@@ -11,13 +11,19 @@ const inertIntoDb = async (req: Request) => {
   if (file) {
     data.icon = file.path;
   }
-  console.log(req.body.data);
+
   const result = await prisma.specialty.create({
     data: data,
   });
   return result;
 };
 
+const getAllDb = async () => {
+  const result = await prisma.specialty.findMany();
+  return result;
+};
+
 export const speacialitesServices = {
   inertIntoDb,
+  getAllDb,
 };

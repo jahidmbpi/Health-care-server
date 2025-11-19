@@ -8,5 +8,6 @@ router.post(
   multerUpload.single("file"),
   speacialitesController.inertIntoDb
 );
+router.get("/getall-Db", speacialitesController.getALlDB);
 
 export const specialitiesRouter = router;
