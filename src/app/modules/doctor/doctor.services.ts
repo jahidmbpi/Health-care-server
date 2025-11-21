@@ -1,3 +1,4 @@
+import httpStatus from "http-status";
 import { Doctor, Prisma } from "@prisma/client";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
@@ -5,6 +6,7 @@ import { doctorSearchAblefield } from "./doctor.constant";
 
 import { Prisma as prisma } from "../../config/prisma";
 import { IDoctorInput } from "./doctor.interface";
+import AppError from "../../../helper/appError";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);
@@ -132,7 +134,21 @@ const updateDoctor = async (id: string, payload: Partial<IDoctorInput>) => {
     });
   });
 };
+
+const getDoctorById = async (id: string) => {
+  const result = await prisma.doctor.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, "doctor not found");
+  }
+
+  return result;
+};
 export const doctorServices = {
   getAllFromDb,
   updateDoctor,
+  getDoctorById,
 };
