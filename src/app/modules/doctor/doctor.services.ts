@@ -147,8 +147,57 @@ const getDoctorById = async (id: string) => {
 
   return result;
 };
+
+const deleteDoctorById = async (id: string) => {
+  const isExsitDoctor = await prisma.doctor.findUnique({
+    where: { id },
+  });
+
+  if (!isExsitDoctor) {
+    throw new AppError(httpStatus.NOT_FOUND, "Doctor not found");
+  }
+
+  if (isExsitDoctor.isDeleted === true) {
+    throw new AppError(httpStatus.NOT_FOUND, "Doctor already deleted");
+  }
+
+  const result = await prisma.$transaction(async (tnx) => {
+    // 1. Delete schedules first
+    const deleteSchedule = await tnx.doctorSchedule.deleteMany({
+      where: {
+        doctorId: isExsitDoctor.id,
+      },
+    });
+
+    // 2. Delete doctorSpecialties
+    const deleteSpeciality = await tnx.doctorSpecialty.deleteMany({
+      where: {
+        doctorId: isExsitDoctor.id,
+      },
+    });
+    // 4. Delete doctor (LAST)
+    const deletedDoctor = await tnx.doctor.delete({
+      where: { id: isExsitDoctor.id },
+    });
+    // 3. Delete user
+    const deletedUser = await tnx.user.delete({
+      where: { email: isExsitDoctor.email },
+    });
+
+    return {
+      deletedDoctor,
+      deletedUser,
+      deleteSpeciality,
+      deleteSchedule,
+    };
+  });
+
+  return result;
+};
+
 export const doctorServices = {
   getAllFromDb,
   updateDoctor,
   getDoctorById,
+  deleteDoctorById,
 };

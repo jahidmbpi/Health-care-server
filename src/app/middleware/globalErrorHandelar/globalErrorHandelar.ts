@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { ZodError } from "zod";
@@ -34,6 +35,13 @@ const globalErrorHandler = (
       error = err.meta;
     }
   }
+  // if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+  //   if (err.message.includes("23001")) {
+  //     statusCode = httpStatus.BAD_REQUEST;
+  //     message = "Delete failed! This doctor has related schedules.";
+  //     error = err.message;
+  //   }
+  // }
 
   if (err instanceof ZodError) {
     statusCode = httpStatus.BAD_REQUEST;

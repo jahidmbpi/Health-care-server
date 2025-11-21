@@ -2,7 +2,7 @@ model  User{
   id String @id @default(uuid())
   email String @unique
   password           String
-  role UserRole @default(PATIENT)
+  role UserRole 
   needPasswordChange Boolean @default(true)
   status UserStatus @default(ACTIVE)
   createdAt DateTime @default(now())
@@ -45,7 +45,7 @@ model Doctor{
   isDeleted Boolean @default(false)
  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-      specialties           DoctorSpecialty[] 
+  specialties           DoctorSpecialty[] 
    doctorSchedule DoctorSchedule[]
    user User @relation(fields:[email],references:[email])
 
