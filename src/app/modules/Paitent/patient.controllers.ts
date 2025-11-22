@@ -28,7 +28,19 @@ const getPatientById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updatePatient = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload = req.body;
+  const result = await patientServices.updatePatient(id, payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "all patient retrive success",
+    data: result,
+  });
+});
 export const patientController = {
   getAllpatient,
   getPatientById,
+  updatePatient,
 };

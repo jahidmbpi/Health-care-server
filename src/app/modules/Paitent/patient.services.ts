@@ -1,3 +1,4 @@
+import { IAuthUser } from "./../auth/auth.interface";
 import httpStatus from "http-status";
 import { Prisma, UserStatus } from "@prisma/client";
 import { Prisma as prisma } from "../../config/prisma";
@@ -5,6 +6,7 @@ import { IPaginationOptions } from "../../interface/pagination";
 import { searchAbleField } from "./patient.constant";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import AppError from "../../../helper/appError";
+import { IPatient } from "./patient.interface";
 
 const getAllpatient = async (filter: any, option: IPaginationOptions) => {
   const { searchTram, ...filterData } = filter;
@@ -88,4 +90,15 @@ const getPatientById = async (id: string) => {
   return patientData;
 };
 
-export const patientServices = { getAllpatient, getPatientById };
+const updatePatient = async (id: string, payload: Partial<IPatient>) => {
+  const UpdatedPatient = await prisma.patient.update({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    data: payload,
+  });
+  return UpdatedPatient;
+};
+
+export const patientServices = { getAllpatient, getPatientById, updatePatient };

@@ -10,4 +10,5 @@ router.get(
   cheakAuth(UserRole.ADMIN, UserRole.PATIENT),
   patientController.getPatientById
 );
+router.patch("/:id", patientController.updatePatient);
 export const patientRouter = router;

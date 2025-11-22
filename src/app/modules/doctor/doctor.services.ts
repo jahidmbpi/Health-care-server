@@ -7,7 +7,6 @@ import { doctorSearchAblefield } from "./doctor.constant";
 import { Prisma as prisma } from "../../config/prisma";
 import { IDoctorInput } from "./doctor.interface";
 import AppError from "../../../helper/appError";
-import { includes } from "zod";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);
