@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { Doctor, Prisma } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
 import { doctorSearchAblefield } from "./doctor.constant";
@@ -7,6 +7,7 @@ import { doctorSearchAblefield } from "./doctor.constant";
 import { Prisma as prisma } from "../../config/prisma";
 import { IDoctorInput } from "./doctor.interface";
 import AppError from "../../../helper/appError";
+import { includes } from "zod";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);
@@ -194,10 +195,59 @@ const deleteDoctorById = async (id: string) => {
 
   return result;
 };
+const softDeleteById = async (id: string) => {
+  const isExsitDoctor = await prisma.doctor.findUnique({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  if (isExsitDoctor) {
+    throw new AppError(404, "doctor not found");
+  }
+
+  const result = await prisma.$transaction(async (tnx) => {
+    const deleteDoctor = await tnx.doctor.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+      include: {
+        user: true,
+        specialties: {
+          include: {
+            specialty: {
+              include: {
+                doctorSpecialties: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    await tnx.user.update({
+      where: {
+        email: deleteDoctor.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deleteDoctor;
+  });
+
+  return result;
+};
 
 export const doctorServices = {
   getAllFromDb,
   updateDoctor,
   getDoctorById,
   deleteDoctorById,
+  softDeleteById,
 };
