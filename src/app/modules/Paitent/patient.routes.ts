@@ -11,4 +11,5 @@ router.get(
   patientController.getPatientById
 );
 router.patch("/:id", patientController.updatePatient);
+router.delete("/:id", patientController.deletePatient);
 export const patientRouter = router;

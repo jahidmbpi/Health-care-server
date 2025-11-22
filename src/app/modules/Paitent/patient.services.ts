@@ -101,4 +101,21 @@ const updatePatient = async (id: string, payload: Partial<IPatient>) => {
   return UpdatedPatient;
 };
 
-export const patientServices = { getAllpatient, getPatientById, updatePatient };
+const deletePatient = async (id: string) => {
+  const UpdatedPatient = await prisma.patient.update({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
+  return UpdatedPatient;
+};
+export const patientServices = {
+  getAllpatient,
+  getPatientById,
+  updatePatient,
+  deletePatient,
+};
