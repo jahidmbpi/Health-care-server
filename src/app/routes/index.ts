@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { userRouter } from "../modules/user/user.routes";
-
 import { authRouter } from "../modules/auth/auth.routes";
 import { scheduleRouter } from "../modules/schedule/schedule.routes";
 import { doctorShedulesRoutes } from "../modules/doctorShedules/doctorShedules.routes";
 import { specialitiesRouter } from "../modules/speacialites/speacialites.routes";
 import { doctorRouter } from "../modules/doctor/doctor.routes";
+import { patientRouter } from "../modules/Paitent/patient.routes";
 
 const router = Router();
 
@@ -33,6 +33,10 @@ const moduleRoutes = [
   {
     path: "/doctor",
     route: doctorRouter,
+  },
+  {
+    path: "/patient",
+    route: patientRouter,
   },
 ];
 
