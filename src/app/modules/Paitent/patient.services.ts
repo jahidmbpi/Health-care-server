@@ -1,8 +1,10 @@
-import { Prisma } from "@prisma/client";
+import httpStatus from "http-status";
+import { Prisma, UserStatus } from "@prisma/client";
 import { Prisma as prisma } from "../../config/prisma";
 import { IPaginationOptions } from "../../interface/pagination";
 import { searchAbleField } from "./patient.constant";
 import { paginationHelper } from "../../../helper/paginationHelper";
+import AppError from "../../../helper/appError";
 
 const getAllpatient = async (filter: any, option: IPaginationOptions) => {
   const { searchTram, ...filterData } = filter;
@@ -40,9 +42,50 @@ const getAllpatient = async (filter: any, option: IPaginationOptions) => {
     orderBy: {
       [sortBy as any]: sortOrder,
     },
+    include: {
+      user: true,
+    },
   });
 
-  return result;
+  const total = await prisma.patient.count({
+    where: whereCondition,
+  });
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  };
 };
 
-export const patientServices = { getAllpatient };
+const getPatientById = async (id: string) => {
+  const patientData = await prisma.patient.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  const userData = await prisma.user.findUnique({
+    where: {
+      email: patientData?.email,
+    },
+  });
+  if (
+    userData?.status === UserStatus.INACTIVE ||
+    userData?.status === UserStatus.DELETED
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "this user not permitted on this site. please contact admin or higher authority"
+    );
+  }
+  return patientData;
+};
+
+export const patientServices = { getAllpatient, getPatientById };
