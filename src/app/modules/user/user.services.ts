@@ -61,7 +61,6 @@ const createAdmin = async (req: Request) => {
     const admin = await tnx.admin.create({
       data: {
         ...req.body.admin,
-        userId: user.id, // ✅ optional
       },
     });
 
