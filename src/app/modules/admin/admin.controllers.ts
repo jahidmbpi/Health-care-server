@@ -38,8 +38,20 @@ const upadeteAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await adminServices.deleteAdminById(id);
+  sendResponse(res, {
+    success: true,
+    message: "admin delete success",
+    statusCode: 200,
+    data: result,
+  });
+});
+
 export const adminController = {
   getAllAdmin,
   getAdminById,
   upadeteAdmin,
+  deleteAdmin,
 };

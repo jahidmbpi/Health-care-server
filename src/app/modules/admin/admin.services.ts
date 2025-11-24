@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { Admin, Prisma } from "@prisma/client";
+import { Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { Prisma as prisma } from "../../config/prisma";
 import { IPaginationOptions } from "../../interface/pagination";
@@ -112,8 +112,46 @@ const upadeteAdmin = async (req: Request) => {
   });
   return result;
 };
+const deleteAdminById = async (id: string) => {
+  const isExsistAdmin = await prisma.admin.findUnique({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  if (!isExsistAdmin) {
+    throw new AppError(httpStatus.NOT_FOUND, "admin not found");
+  }
+
+  const result = await prisma.$transaction(async (tnx) => {
+    await tnx.user.update({
+      where: {
+        email: isExsistAdmin.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    const updatedAdmin = await tnx.admin.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    return updatedAdmin;
+  });
+
+  return result;
+};
+
 export const adminServices = {
   getAllAdmin,
   getAdminById,
   upadeteAdmin,
+  deleteAdminById,
 };

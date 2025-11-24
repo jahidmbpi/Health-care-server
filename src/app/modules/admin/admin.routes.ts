@@ -13,4 +13,5 @@ router.patch(
   multerUpload.single("file"),
   adminController.upadeteAdmin
 );
+router.delete("/:id", cheakAuth(UserRole.ADMIN), adminController.deleteAdmin);
 export const adminRouter = router;
