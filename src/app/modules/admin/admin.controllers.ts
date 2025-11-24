@@ -28,7 +28,18 @@ const getAdminById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const upadeteAdmin = catchAsync(async (req: Request, res: Response) => {
+  const result = await adminServices.upadeteAdmin(req);
+  sendResponse(res, {
+    success: true,
+    message: "admin update success",
+    statusCode: 200,
+    data: result,
+  });
+});
+
 export const adminController = {
   getAllAdmin,
   getAdminById,
+  upadeteAdmin,
 };
