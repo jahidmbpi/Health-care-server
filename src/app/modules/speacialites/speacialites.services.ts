@@ -1,7 +1,8 @@
 import { Request } from "express";
-import { Prisma as prisma } from "../../config/prisma";
+
 import { Ispeacialites } from "./speacialities.interface";
 import AppError from "../../../helper/appError";
+import { prisma } from "../../config/prisma";
 
 const inertIntoDb = async (req: Request) => {
   const file = req.file;

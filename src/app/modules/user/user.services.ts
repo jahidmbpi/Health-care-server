@@ -4,7 +4,7 @@ import { Doctor, UserRole, Prisma } from "@prisma/client";
 import { IPaginationOptions } from "../../interface/pagination";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { userSearchAbleFields } from "./user.constant";
-import { Prisma as prisma } from "../../config/prisma";
+import { prisma } from "../../config/prisma";
 
 const createPatient = async (req: Request) => {
   const profilePhoto = req.file?.path as string | undefined;
@@ -29,7 +29,6 @@ const createPatient = async (req: Request) => {
     const patient = await tnx.patient.create({
       data: {
         ...req.body.patient,
-        userId: user.id,
       },
     });
     return patient;

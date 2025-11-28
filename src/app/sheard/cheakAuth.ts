@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import AppError from "../../helper/appError";
 import { envVars } from "../config";
 import Jwt, { JwtPayload } from "jsonwebtoken";
-import { Prisma } from "../config/prisma";
+
+import { prisma } from "../config/prisma";
 
 export const cheakAuth = (...allowedRoles: UserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -24,7 +25,7 @@ export const cheakAuth = (...allowedRoles: UserRole[]) => {
 
       console.log(verifyTocken);
 
-      const isUserExsit = await Prisma.user.findUnique({
+      const isUserExsit = await prisma.user.findUnique({
         where: {
           email: verifyTocken.email,
         },

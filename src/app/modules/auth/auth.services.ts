@@ -1,12 +1,13 @@
 import { UserStatus } from "@prisma/client";
-import { Prisma } from "../../config/prisma";
+
 import bcrypt from "bcryptjs";
 import { createUserTocken } from "../../sheard/createUserTocken";
 import { setCoockie } from "../../sheard/setCoockie";
 import AppError from "../../../helper/appError";
+import { prisma } from "../../config/prisma";
 
 const userLogIn = async (payload: { email: string; password: string }) => {
-  const isUserExsit = await Prisma.user.findUnique({
+  const isUserExsit = await prisma.user.findUnique({
     where: {
       email: payload.email,
       status: UserStatus.ACTIVE,

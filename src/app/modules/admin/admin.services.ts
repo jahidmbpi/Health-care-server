@@ -1,12 +1,13 @@
 import { JwtPayload } from "jsonwebtoken";
 import { Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../../helper/paginationHelper";
-import { Prisma as prisma } from "../../config/prisma";
+
 import { IPaginationOptions } from "../../interface/pagination";
 import { searchAbleField } from "./admin.constanr";
 import AppError from "../../../helper/appError";
 import httpStatus from "http-status";
 import { Request } from "express";
+import { prisma } from "../../config/prisma";
 const getAllAdmin = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(option);

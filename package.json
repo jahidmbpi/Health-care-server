@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@openrouter/sdk": "^0.1.27",
-    "@prisma/client": "^6.18.0",
+    "@prisma/client": "^6.19.0",
     "@types/http-status-codes": "^1.2.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
@@ -35,15 +35,26 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "openai": "^6.9.1",
+    "pg": "^8.16.3",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.4",
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
     "nodemon": "^3.1.10",
-    "prisma": "^6.18.0",
+    "prisma": "^6.19.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jahidmbpi/Health-care-server.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jahidmbpi/Health-care-server/issues"
+  },
+  "homepage": "https://github.com/jahidmbpi/Health-care-server#readme"
 }

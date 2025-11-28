@@ -1,17 +1,18 @@
 import httpStatus from "http-status";
 
 import { JwtPayload } from "jsonwebtoken";
-import { Prisma as prisma } from "../../config/prisma";
+
 import { IPaginationOptions } from "../../interface/pagination";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { Prisma } from "@prisma/client";
 import AppError from "../../../helper/appError";
+import { prisma } from "../../config/prisma";
 
 const createDoctorSchedule = async (
   user: JwtPayload,
   payload: { scheduleIds: string[] }
 ) => {
-  console.log(user);
+  console.log(payload);
   const doctorData = await prisma.doctor.findUniqueOrThrow({
     where: {
       email: user.email,

@@ -1,0 +1,50 @@
+
+
+model Appoinment{
+    id String @id @default(uuid())
+    patientId String
+    patient Patient @relation(fields: [patientId],references: [id])
+    doctorId String
+    doctor Doctor @relation(fields: [doctorId],references: [id])
+    scheduleId String 
+    schedule Schedule @relation(fields: [scheduleId],references: [id])
+    videoCallingId String
+    status AppoinmentStatus @default(SCHEDULED)
+    paymentStatus PamentStatus @default(UNPAID)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+     payments    Payment?
+     prescription Prescription?
+
+@@map("appoinment")
+}
+
+
+model Payment{
+    id String @id @default(uuid())
+    appoinmentId String @unique
+    appoinment Appoinment @relation(fields: [appoinmentId],references: [id])
+    amount Float
+    transectionId String @unique
+    status PamentStatus @default(UNPAID)
+    paymentGetwayData Json?
+        createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@map("payment")
+}
+
+
+model Prescription{
+       id String @id @default(uuid()) 
+        appoinmentId String @unique
+        appoinment Appoinment @relation(fields: [appoinmentId],references: [id])
+doctorId String
+ doctor Doctor @relation(fields: [doctorId],references: [id])
+patientId String
+   patient Patient @relation(fields: [patientId],references: [id])
+instruction String
+followUpdate DateTime
+createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+    @@map("prescription")
+}

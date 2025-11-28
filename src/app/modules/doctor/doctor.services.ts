@@ -4,11 +4,11 @@ import { paginationHelper } from "../../../helper/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
 import { doctorSearchAblefield } from "./doctor.constant";
 
-import { Prisma as prisma } from "../../config/prisma";
 import { IDoctorInput } from "./doctor.interface";
 import AppError from "../../../helper/appError";
 import { openai } from "../../config/open-Router";
 import { retry } from "@openrouter/sdk/lib/retries.js";
+import { prisma } from "../../config/prisma";
 const getAllFromDb = async (filter: any, option: IPaginationOptions) => {
   const { page, limit, sortBy, sortOrder, skip } =
     paginationHelper.calculatePagination(option);

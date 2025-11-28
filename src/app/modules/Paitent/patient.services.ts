@@ -1,12 +1,13 @@
 import { IAuthUser } from "./../auth/auth.interface";
 import httpStatus from "http-status";
 import { Prisma, UserStatus } from "@prisma/client";
-import { Prisma as prisma } from "../../config/prisma";
+
 import { IPaginationOptions } from "../../interface/pagination";
 import { searchAbleField } from "./patient.constant";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import AppError from "../../../helper/appError";
 import { IPatient } from "./patient.interface";
+import { prisma } from "../../config/prisma";
 
 const getAllpatient = async (filter: any, option: IPaginationOptions) => {
   const { searchTram, ...filterData } = filter;

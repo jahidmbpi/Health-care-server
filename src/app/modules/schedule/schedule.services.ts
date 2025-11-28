@@ -2,10 +2,10 @@ import { addHours, addMinutes, format } from "date-fns";
 import { IPaginationOptions } from "../../interface/pagination";
 import { paginationHelper } from "../../../helper/paginationHelper";
 
-import { Prisma as prisma } from "../../config/prisma";
 import { Prisma } from "@prisma/client";
 import { IAuthUser } from "../auth/auth.interface";
 import { JwtPayload } from "jsonwebtoken";
+import { prisma } from "../../config/prisma";
 
 const createSchedule = async (payload: any) => {
   const { startDate, endDate, startTime, endTime } = payload;

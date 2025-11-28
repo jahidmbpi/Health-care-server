@@ -1,10 +1,10 @@
 model Schedule {
   id             String   @id @default(ulid())
-  startDateTime  DateTime
+   startDateTime  DateTime
   endDateTime    DateTime
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-
+  appoinments Appoinment[] 
   doctorSchedules DoctorSchedule[]
 
   @@map("schedule")
