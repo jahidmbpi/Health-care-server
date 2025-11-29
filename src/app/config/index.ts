@@ -13,6 +13,8 @@ interface ENVConfig {
     JWT_ACCESS_EXPIRE: string;
   };
   OPENROUTER_API_KEY: string;
+  STRIPE_SECRET_KEY: string;
+  CLIENT_URL: string;
 }
 
 const LoadEnvVariable = (): ENVConfig => {
@@ -25,6 +27,8 @@ const LoadEnvVariable = (): ENVConfig => {
     "JWT_ACCESS_SECRET",
     "JWT_ACCESS_SECRET",
     "OPENROUTER_API_KEY",
+    "STRIPE_SECRET_KEY",
+    "CLIENT_URL",
   ];
   requiredVariable.forEach((key) => {
     if (!process.env[key]) {
@@ -45,6 +49,8 @@ const LoadEnvVariable = (): ENVConfig => {
       JWT_ACCESS_EXPIRE: process.env.JWT_ACCESS_EXPIRE as string,
     },
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY as string,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
+    CLIENT_URL: process.env.CLIENT_URL as string,
   };
 };
 

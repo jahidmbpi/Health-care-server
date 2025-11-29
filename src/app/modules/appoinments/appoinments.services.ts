@@ -1,7 +1,10 @@
+import { email } from "zod";
 import { prisma } from "../../config/prisma";
 import AppError from "../../../helper/appError";
 import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { stripe } from "../../config/stripe";
+import { envVars } from "../../config";
 
 const createAppoinment = async (
   patient: JwtPayload,
@@ -66,6 +69,29 @@ const createAppoinment = async (
         amount: doctorData.appoinmentFee,
       },
     });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: patient.email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Appoinment with ${doctorData.name}`,
+            },
+            unit_amount: doctorData.appoinmentFee * 100,
+          },
+          quantity: 1,
+        },
+      ],
+
+      success_url: `https://chatgpt.com`,
+      cancel_url: `https://www.youtube.com`,
+    });
+    console.log(session);
+
     return appoinmentData;
   });
 
