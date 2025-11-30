@@ -3,8 +3,9 @@ import catchAsync from "../../sheard/catchAsync";
 import sendResponse from "../../sheard/sendResponse";
 import { stripe } from "../../config/stripe";
 import { paymentServices } from "./payment.services";
-const endpointSecret =
-  "whsec_422a53fe52344eb9b07861cbf0adfdb9e59125b8f4f4c159487470b96955f588";
+import { envVars } from "../../config";
+const endpointSecret = envVars.STRIPE_ENDPOINT_SECRET;
+
 const handleStripeWebhookEvent = catchAsync(
   async (req: Request, res: Response) => {
     let event;

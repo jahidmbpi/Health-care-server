@@ -86,13 +86,16 @@ const createAppoinment = async (
           quantity: 1,
         },
       ],
+      metadata: {
+        appoinmentId: appoinmentData.id,
+        paymentId: paymentData.id,
+      },
 
       success_url: `https://chatgpt.com`,
       cancel_url: `https://www.youtube.com`,
     });
-    console.log(session);
 
-    return appoinmentData;
+    return session.url;
   });
 
   return result;
