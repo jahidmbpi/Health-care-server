@@ -2,12 +2,18 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import router from "./app/routes";
 import globalErrorHandler from "./app/middleware/globalErrorHandelar/globalErrorHandelar";
+import { apymentController } from "./app/modules/payment/payment.controllers";
 const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
   })
+);
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  apymentController.handleStripeWebhookEvent
 );
 
 // percer
@@ -19,6 +25,7 @@ app.use(
 );
 
 // route
+
 app.use("/api/v1", router);
 app.use(globalErrorHandler);
 
