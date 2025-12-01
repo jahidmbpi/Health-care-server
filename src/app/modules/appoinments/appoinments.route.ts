@@ -11,4 +11,10 @@ router.post(
   appoinmentController.createAppoinment
 );
 
+router.get(
+  "/my-appoinment",
+  cheakAuth(UserRole.PATIENT, UserRole.DOCTOR),
+  appoinmentController.getMyAppoinment
+);
+
 export const appoinmentRoute = router;

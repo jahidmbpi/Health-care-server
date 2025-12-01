@@ -4,7 +4,10 @@ import AppError from "../../../helper/appError";
 import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { stripe } from "../../config/stripe";
-import { envVars } from "../../config";
+
+import { IPaginationOptions } from "../../interface/pagination";
+import { paginationHelper } from "../../../helper/paginationHelper";
+import { Prisma, UserRole } from "@prisma/client";
 
 const createAppoinment = async (
   patient: JwtPayload,
@@ -101,6 +104,69 @@ const createAppoinment = async (
   return result;
 };
 
+const getMyAppoinment = async (
+  user: JwtPayload,
+  option: IPaginationOptions,
+  filter: any
+) => {
+  console.log(user, option, filter);
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(option);
+
+  const { ...filterData } = filter;
+  const andCondition: Prisma.AppoinmentWhereInput[] = [];
+
+  if (user.role === UserRole.PATIENT) {
+    andCondition.push({
+      patient: {
+        email: user.email,
+      },
+    });
+  }
+  if (user.role === UserRole.DOCTOR) {
+    andCondition.push({
+      doctor: {
+        email: user.email,
+      },
+    });
+  }
+  if (Object.keys(filterData).length > 0) {
+    const filterConditions = Object.keys(filterData).map((key) => ({
+      [key]: {
+        equals: (filterData as any)[key],
+      },
+    }));
+
+    andCondition.push(...filterConditions);
+  }
+
+  const whereCondition: Prisma.AppoinmentWhereInput =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+  const result = await prisma.appoinment.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    include:
+      user.role === UserRole.DOCTOR ? { patient: true } : { doctor: true },
+  });
+
+  const total = await prisma.appoinment.count({
+    where: whereCondition,
+  });
+
+  return {
+    meta: {
+      total,
+      limit,
+      page,
+    },
+    data: result,
+  };
+};
 export const appoinmentServices = {
   createAppoinment,
+  getMyAppoinment,
 };
